@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mi App Vertical">
+    <link rel="apple-touch-icon" href="imagenes/logotype.png">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div id="main-content">
+        <div id="screen-bloqueo">
+            <div id="timer-container">
+                <div class="countdown">
+                    <div class="time-block">
+                        <span id="days">00</span>
+                        <label>Días</label>
+                    </div>
+                    <div class="time-block">
+                        <span id="hours">00</span>
+                        <label>Horas</label>
+                    </div>
+                    <div class="time-block">
+                        <span id="minutes">00</span>
+                        <label>Min.</label>
+                    </div>
+                    <div class="time-block">
+                        <span id="seconds">00</span>
+                        <label>Seg.</label>
+                    </div>
+                </div>
+            </div>
+            <div id="password-screen" style="display: none;">
+                <div class="login-box">
+                    <div class="icon-lock">🔒</div>
+                    <h3>Acceso Restringido</h3>
+                    <p>Pista: Lo tengo tatuado en la mano derecha.</p>
+                    <input type="password" id="pass-input" placeholder="••••••••">
+                    <button onclick="checkPassword()">Entrar</button>
+                </div>
+            </div>
+        </div>
+
+        <main id="contenido-web" style="display: none;">
+            <div class="list-container">
+                <div id="contenedor-pruebas" class="ios-list">
+                </div>
+            </div>
+        </main>
+
+        <div id="ios-install-prompt" class="ios-prompt">
+            <div class="prompt-content">
+                <p>Instala esta App en tu iPhone</p>
+                <div class="steps">
+                    <span>Pulsa <img src="imagenes/compartir.svg" width="20"> y luego <b>"Añadir a la pantalla de
+                            inicio"</span>
+                </div>
+                <button onclick="closePrompt()">Ahora no</button>
+            </div>
+            <div class="pointer"></div>
+        </div>
+    </div>
+
+    <div id="fondo-personalizado"
+        style="position: fixed; top:0; left:0; width:100%; height:100%; background: url('imagenes/nosotros.jpeg') no-repeat center center; background-size: cover; opacity: 0.15; z-index: -1;">
+    </div>
+
+    <div id="modal-prueba" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarPrueba()">&times;</span>
+
+            <div class="modal-header">
+                <div class="icon-circle">🎵</div>
+                <h2 id="titulo-nayeli">Para Nayeli con ❤️</h2>
+                <p>Escucha con atención</p>
+            </div>
+
+            <div id="foto-prueba-container" style="display:none; margin-bottom: 15px;">
+                <img id="img-prueba" src=""
+                    style="width: 100%; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            </div>
+
+            <div class="audio-container">
+                <audio id="audio-player" controls>
+                    <source src="musica/que suena.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+
+            <div class="pregunta-area">
+                <p class="enunciado">¿Cómo se llama esta canción?</p>
+                <input type="text" id="respuesta-prueba" placeholder="na na na na">
+                <button id="btn-enviar-prueba" onclick="validarRespuestaPrueba()">Enviar respuesta</button>
+                <p id="error-prueba" style="display:none;">❌ ¡Casi, Nayeli! Prueba otra vez</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-premio" class="modal-overlay">
+        <div class="modal-content success-content">
+            <span class="close-modal" onclick="cerrarPremio()">&times;</span>
+            <div class="success-icon">🏆</div>
+            <h2 id="premio-titulo">¡Lo has conseguido!</h2>
+            <p id="premio-msg">¡Eres una máquina! Nuestra canción no se olvida nuna.</p>
+
+            <a id="download-link" href="#" download class="btn-download">
+                <span class="icon-dl">📥</span> Descargar Premio
+            </a>
+        </div>
+    </div>
+
+    <div id="modal-final-total" class="modal-overlay"
+        style="display:none; z-index: 40000; background: rgba(255, 75, 107, 0.9);">
+        <div class="modal-content final-anim">
+            <div class="final-visuals">
+                <div class="main-heart">💖</div>
+            </div>
+
+            <h1 style="color: #ff4b6b; font-size: 2rem; margin-bottom: 20px;">¡Lo lograste, mi amor!</h1>
+
+            <div class="texto-final-scroll">
+                <p>Nayeli, has superado cada reto, igual que superamos todo juntos. ❤️</p>
+                <p>Esto es solo un pequeño ejemplo de todos los momentos increíbles que nos quedan por construir. Cada
+                    día a tu lado es mi premio favorito.</p>
+                <p><b>Te quiero más de lo que las palabras pueden explicar.</b> Eres el amor de vida hoy y siempre.</p>
+            </div>
+
+            <button class="btn-rosa-bonito" onclick="cerrarFinal()">Nuestro viaje continúa...</button>
+        </div>
+    </div>
+
+    <div id="modal-bienvenida" class="modal-overlay"
+        style="display:none; z-index: 30000; opacity: 1; transition: opacity 0.5s ease;">
+        <div class="modal-content bienvenida-anim">
+            <div class="modal-header">
+                <div class="heart-icon">❤️</div>
+                <h2 style="color: #ff4b6b;">¡Hola, Nayeli!</h2>
+            </div>
+
+            <div class="pregunta-area" style="margin-top: 20px;">
+                <p style="font-size: 1.1rem; line-height: 1.5; color: #333; margin-bottom: 20px;">
+                    Bienvenida a tu espacio especial. He preparado este juego para recordarte lo mucho que <b>te
+                        quiero</b>.
+                </p>
+                <p style="font-size: 1rem; line-height: 1.5; color: #555; margin-bottom: 25px;">
+                    A lo largo de los días se irán desbloqueando pruebas. Algunas tendrán música, otras acertijos... Al
+                    final de cada una, habrá una recompensa o un reto que deberás cumplir. ¿Estás lista?
+                </p>
+
+                <button id="btn-comenzar" class="btn-rosa-bonito" onclick="cerrarBienvenida()">Empezar nuestra
+                    aventura</button>
+
+                <p
+                    style="font-size: 0.9rem; margin-top: 20px; color: #ff4b6b; font-weight: bold; animation: pulse 2s infinite;">
+                    Te amo infinito. Siempre.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="error-screen">
+        <h1>Por favor, abre la app en un teléfono móvil.</h1>
+    </div>
+    <script>
+        const targetDate = new Date("March 15, 2026 20:30:00").getTime();
+
+        const updateTimer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                clearInterval(updateTimer);
+                document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+
+                lanzarConfeti();
+
+                setTimeout(() => {
+                    const sessionStart = localStorage.getItem("session_start");
+                    const unaHora = 60 * 60 * 1000;
+                    const sesionValida = sessionStart && (Date.now() - sessionStart < unaHora);
+                    if (sesionValida) {
+                        entrarAlContenido();
+                    } else {
+                        document.getElementById("timer-container").style.display = "none";
+                        const passScreen = document.getElementById("password-screen");
+                        passScreen.style.display = "flex";
+                        setTimeout(() => { passScreen.style.opacity = "1"; }, 50);
+                    }
+                }, 2000);
+
+                return;
+            }
+
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+
+        }, 1000);
+
+        function lanzarConfeti() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10001 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function () {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function entrarAlContenido() {
+            const bloqueo = document.getElementById("screen-bloqueo");
+            const contenido = document.getElementById("contenido-web");
+
+            bloqueo.classList.add("hidden");
+            setTimeout(() => {
+                bloqueo.style.display = "none";
+                contenido.style.display = "block";
+                contenido.style.opacity = "0";
+                setTimeout(() => {
+                    contenido.style.transition = "opacity 0.8s ease";
+                    contenido.style.opacity = "1";
+                }, 50);
+            }, 1000);
+        }
+
+        const PRUEBAS_CONFIG = [
+            { id: 1, titulo: "Nuestra Melodía", fecha: "2026-03-16T20:00:00", icono: "🎵", premio: "premios/entradas_cine.pdf", tipo: "audio", pregunta: "Naye, ¿te acuerdas de qué canción es esta?", respuesta: "el tiempo que paso contigo", placeholder: "Título de la canción...", subtitulo: "Sube el volumen" },
+            { id: 2, titulo: "El Código de las Flores", fecha: "2026-03-17T20:00:00", icono: "🌼", premio: "Este premio viene con una rosa y algo más...", tipo: "texto", pregunta: "Si cada rosa significa un 'te quiero', ¿cuál es tu flor favorita?", respuesta: "rosa", placeholder: "Dime la flor...", subtitulo: "Piensa en rojo" },
+            { id: 3, titulo: "Nuestro Rincón", fecha: "2026-03-19T20:00:00", icono: "📍", premio: "Cena en mi rincón favorito pero de una manera especial.", tipo: "texto", pregunta: "¿Cuál es mi rincón favorito del mundo (siempre que estés tú)?", respuesta: "mirador de matadepera", placeholder: "Un lugar alto...", subtitulo: "Está muy cerca" },
+            { id: 4, titulo: "¡Mi hijo!", fecha: "2026-03-20T20:00:00", icono: "🧩", premio: "premios/entradas_salting.pdf", tipo: "texto", pregunta: "¿Cómo se llama nuestro hijo predilecto?", respuesta: "amaron", placeholder: "¿Qué nombre tendrá?" },
+            { id: 5, titulo: "Viajes", fecha: "2026-03-21T20:00:00", icono: "✈️", premio: "premios/entrada_escaperoom.jpeg", tipo: "texto", pregunta: "¿Recuerdas nuestro primer viaje fuera de España?", respuesta: "andorra", placeholder: "¿Dónde fué?", subtitulo: "Está muy cerca" },
+            { id: 6, titulo: "Cocina", fecha: "2026-03-22T09:00:00", icono: "👨‍🍳", premio: "premios/entradas_cosmocaixa.pdf", tipo: "texto", pregunta: "¿Qué es lo que mejor se me da cocinar?", respuesta: "pasta", placeholder: "La Airfryer quizá jeje", subtitulo: "Es algo que hago muy a menudo" }
+        ];
+
+        function renderizarPruebas() {
+            const lista = document.getElementById("contenedor-pruebas");
+            if (!lista) return;
+            lista.innerHTML = "";
+
+            let ultimaHecha = parseInt(localStorage.getItem("progreso_juego") || "0");
+            const ahora = new Date().getTime();
+
+            PRUEBAS_CONFIG.forEach((prueba) => {
+                const fechaDesbloqueo = new Date(prueba.fecha).getTime();
+
+                if (prueba.id === 1 || prueba.id <= (ultimaHecha + 1)) {
+
+                    const div = document.createElement("div");
+                    div.className = "list-item";
+
+                    const esHoraCorrecta = ahora >= fechaDesbloqueo;
+                    const yaCompletada = prueba.id <= ultimaHecha;
+
+                    if (!esHoraCorrecta) {
+                        div.classList.add("locked");
+
+                        const d = new Date(prueba.fecha);
+                        const fechaLegible = `${d.getDate()}/${d.getMonth() + 1} a las ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}h`;
+
+                        div.innerHTML = `
+                    <span class="icon">🔒</span>
+                    <span class="text">Disponible el ${fechaLegible}</span>
+                `;
+                    } else {
+                        div.innerHTML = `
+                    <span class="icon">${prueba.icono}</span>
+                    <span class="text">${prueba.titulo} ${yaCompletada ? '✅' : ''}</span>
+                    <span class="arrow">›</span>
+                `;
+                        div.onclick = () => irAPrueba(prueba.id);
+                    }
+                    lista.appendChild(div);
+                }
+            });
+        }
+
+        function ganarPrueba(id) {
+            localStorage.setItem("progreso_juego", id);
+            renderizarPruebas();
+        }
+
+        function irAPrueba(id) {
+            let ultimaHecha = parseInt(localStorage.getItem("progreso_juego") || "0");
+            const prueba = PRUEBAS_CONFIG.find(p => p.id === id);
+
+            if (id <= ultimaHecha) {
+                mostrarPremio(prueba);
+                return;
+            }
+
+            const modal = document.getElementById("modal-prueba");
+            const audioContainer = document.querySelector(".audio-container");
+            const subtituloModal = document.querySelector(".modal-header p");
+            const tituloModal = document.querySelector(".modal-header h2");
+            const enunciado = document.querySelector(".enunciado");
+
+            const iconoModal = document.querySelector(".icon-circle");
+            const inputRespuesta = document.getElementById("respuesta-prueba");
+
+            tituloModal.innerText = prueba.titulo;
+            subtituloModal.innerText = prueba.subtitulo || "";
+            enunciado.innerText = prueba.pregunta;
+            iconoModal.innerText = prueba.icono;
+            inputRespuesta.placeholder = prueba.placeholder;
+
+            if (prueba.tipo === "audio") {
+                audioContainer.style.display = "block";
+            } else {
+                audioContainer.style.display = "none";
+            }
+
+            document.getElementById("btn-enviar-prueba").setAttribute("data-current-id", id);
+
+            modal.style.display = "flex";
+            document.getElementById("respuesta-prueba").value = "";
+            document.getElementById("error-prueba").style.display = "none";
+        }
+
+        function cerrarPrueba() {
+            document.getElementById("modal-prueba").style.display = "none";
+            const audio = document.getElementById("audio-player");
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
+        function cerrarBienvenida() {
+            const modal = document.getElementById("modal-bienvenida");
+
+            modal.style.opacity = "0";
+
+            setTimeout(() => {
+                modal.style.display = "none";
+                document.getElementById("contenido-web").style.display = "block";
+
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.7 },
+                    colors: ['#ff4b6b', '#ff758c', '#ffffff', '#ffb3c1'],
+                    zIndex: 25000
+                });
+
+            }, 500);
+        }
+
+        function mostrarPremio(prueba) {
+            const modal = document.getElementById("modal-premio");
+            const link = document.getElementById("download-link");
+            const msg = document.getElementById("premio-msg");
+            const titulo = document.getElementById("premio-titulo");
+
+            titulo.innerText = `¡Lo has conseguido!`;
+
+            const esArchivo = prueba.premio.includes(".") && (prueba.premio.includes("/") || prueba.premio.includes("http"));
+
+            if (esArchivo) {
+                msg.innerText = "¡Eres una máquina!";
+                link.style.display = "flex";
+                link.href = prueba.premio;
+                link.classList.remove("btn-entendido");
+                link.innerHTML = '<span class="icon-dl">📥</span> Descargar Premio';
+                link.onclick = () => {
+                    setTimeout(() => {
+                        cerrarPremio();
+                    }, 500);
+                };
+            } else {
+                msg.innerHTML = `<div style="background: #f0f0f5; padding: 15px; border-radius: 12px; margin-top: 10px; color: #333; font-weight: 500;">${prueba.premio}</div>`;
+
+                link.style.display = "flex";
+                link.href = "#";
+                link.innerHTML = '¡Reto aceptado!';
+                link.style.background = "#007AFF";
+
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    cerrarPremio();
+                };
+            }
+
+            modal.style.display = "flex";
+
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 30000
+            });
+        }
+
+        function ganarPrueba(id) {
+            localStorage.setItem("progreso_juego", id);
+            renderizarPruebas();
+
+            if (id === PRUEBAS_CONFIG.length) {
+                setTimeout(() => {
+                    mostrarVictoriaFinal();
+                }, 1500);
+            }
+        }
+
+        function mostrarVictoriaFinal() {
+            const modalFinal = document.getElementById("modal-final-total");
+            modalFinal.style.display = "flex";
+
+            var end = Date.now() + (5 * 1000);
+            var colors = ['#ff4b6b', '#ff758c', '#ffffff'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function cerrarFinal() {
+            document.getElementById("modal-final-total").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("modal-final-total").style.display = "none";
+            }, 500);
+        }
+
+        function validarRespuestaPrueba() {
+            const btn = document.getElementById("btn-enviar-prueba");
+            const idActual = parseInt(btn.getAttribute("data-current-id"));
+            const prueba = PRUEBAS_CONFIG.find(p => p.id === idActual);
+
+            const respuestaUser = document.getElementById("respuesta-prueba").value.trim().toLowerCase();
+
+            if (respuestaUser === prueba.respuesta.toLowerCase()) {
+                cerrarPrueba();
+                localStorage.setItem("progreso_juego", idActual);
+                renderizarPruebas();
+
+                setTimeout(() => {
+                    mostrarPremio(prueba);
+                    if (idActual === PRUEBAS_CONFIG.length) {
+                        setTimeout(() => {
+                            cerrarPremio();
+                            mostrarVictoriaFinal();
+                        }, 4000);
+                    }
+                }, 400);
+            } else {
+                const error = document.getElementById("error-prueba");
+                error.style.display = "block";
+                const content = document.querySelector("#modal-prueba .modal-content");
+                content.classList.add("shake");
+                setTimeout(() => content.classList.remove("shake"), 500);
+            }
+        }
+
+        function cerrarPremio() {
+            document.getElementById("modal-premio").style.display = "none";
+        }
+
+        function checkPassword() {
+            const userInput = document.getElementById("pass-input").value;
+            const SECRET_PASSWORD = "07102025";
+            const errorMsg = document.getElementById("error-msg");
+
+            if (userInput === SECRET_PASSWORD) {
+                localStorage.setItem("session_start", Date.now());
+                document.getElementById("screen-bloqueo").classList.add("hidden");
+
+                setTimeout(() => {
+                    document.getElementById("screen-bloqueo").remove();
+                    document.getElementById("modal-bienvenida").style.display = "flex";
+                }, 1000);
+            } else {
+                const input = document.getElementById("pass-input");
+                input.classList.add("shake");
+                setTimeout(() => { input.classList.remove("shake"); }, 500);
+            }
+        }
+
+        function cerrarBienvenida() {
+            const modal = document.getElementById("modal-bienvenida");
+            modal.style.opacity = "0";
+            modal.style.transition = "opacity 0.5s ease";
+
+            setTimeout(() => {
+                modal.style.display = "none";
+                document.getElementById("contenido-web").style.display = "block";
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 } });
+            }, 500);
+        }
+
+        function showInstallPrompt() {
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+            if (isIos && !isStandalone) {
+                document.getElementById('ios-install-prompt').style.display = 'block';
+            }
+        }
+
+        function closePrompt() {
+            document.getElementById('ios-install-prompt').style.display = 'none';
+        }
+
+        window.onload = showInstallPrompt;
+
+        setInterval(renderizarPruebas, 60000);
+
+        document.addEventListener("DOMContentLoaded", renderizarPruebas);
+    </script>
+</body>
+
+</html>

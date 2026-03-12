@@ -1,0 +1,16 @@
+{
+  "name": "Minijuego",
+  "short_name": "Minijuego",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "imagenes/logotype.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
