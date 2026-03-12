@@ -8,10 +8,11 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "imagenes/logotype.PNG",
+      "src": "https://acatsanchez-png.github.io/minijuego/71025/imagenes/logotype.PNG",
       "sizes": "192x192",
       "type": "image/png"
     }
   ]
 
 }
+
